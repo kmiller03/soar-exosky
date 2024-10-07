@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity WebGL Player | exosky_unity</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
+    <link rel="stylesheet" href="TemplateData/main.css">
+  </head>
+  <body>
+    <div id="container">
+      <div id="left-panel">
+        <h2>Select an Exoplanet</h2>
+
+        <div id="search-bar">
+          <input type="text" id="search-input" placeholder="Search Exoplanet..." />
+          <button id="search-button" onclick="searchExoplanet()">Search</button>
+          <p id="search-result" style="color: red;"></p> 
+        </div>
+
+        <ul id="exoplanet-list"></ul>
+
+        <div id="prev-next-buttons">
+          <button onclick="showPrevious()">Previous</button>
+          <button onclick="showNext()">Next</button>
+        </div>
+
+
+        <button onclick="connectToBall()" style="margin-top: 10px;">Connect to Bluetooth</button> <!-- Button for connecting Bluetooth -->
+        <p id="status">Status: Disconnected</p>
+        <p id="gyroData">Gyro Data: N/A</p> <!-- Display gyro data -->
+      </div>
+
+      <div id="unity-container" class="unity-desktop">
+        <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
+        <div id="unity-loading-bar">
+          <div id="unity-logo"></div>
+          <div id="unity-progress-bar-empty">
+            <div id="unity-progress-bar-full"></div>
+          </div>
+        </div>
+        <div id="unity-warning"></div>
+        <div id="unity-footer">
+          <div id="unity-webgl-logo"></div>
+          <div id="unity-fullscreen-button"></div>
+          <div id="unity-build-title">exosky_unity</div>
+        </div>
+      </div>
+
+      <script>
+        var unityInstance = null;
+        var gyroData = null;
+
+
+        //var exoplanetSets = [
+        //  ['Exo 1', 'Exo 2', 'Exo 3', 'Exo 4', 'Exo 5', 'Exo 6', 'Exo 7', 'Exo 8', 'Exo 9', 'Exo 10'],
+        //  ['Exo 11', 'Exo 12', 'Exo 13', 'Exo 14', 'Exo 15', 'Exo 16', 'Exo 17', 'Exo 18', 'Exo 19', 'Exo 20']
+        //];
+        var exoplanetSets = [];
+
+        var currentSetIndex = 0;
+
+        //use localhost if server is in localhost, otherwise use the server's IP address
+        var serverUrl = "http://localhost:5000";
+        if (window.location.hostname !== "localhost") {
+          serverUrl = "https://" + window.location.hostname + ":5000";
+        }
+
+        //fetch exoplanet data from the server at localhost:5000/expolanets
+        //response is in format:
+        /*
+        {
+            exoplanetSets: [["planetA", "planetB", "planetC"], ["planetD", "planetE", "planetF"]]
+        }
+        */
+
+        
+        
+        function renderExoplanetList() {
+          var exoplanetList = document.getElementById("exoplanet-list");
+          exoplanetList.innerHTML = '';
+          exoplanetSets[currentSetIndex].forEach(function(exoplanetName) {
+            var listItem = document.createElement('li');
+            var button = document.createElement('button');
+            button.innerText = exoplanetName;
+            button.onclick = function() {
+              selectExoplanet(exoplanetName);
+            };
+            listItem.appendChild(button);
+            exoplanetList.appendChild(listItem);
+          });
+        }
+
+        fetch(serverUrl + '/exoplanets')
+        .then(response => response.json())
+        .then(data => {
+          exoplanetSets = data.exoplanetSets;
+          console.log(exoplanetSets);
+          exoplanetSets[0][0] = "Proxima Cen b";
+          renderExoplanetList();
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+        //replace the first option with "Proxima Cen b"
+
+        function showPrevious() {
+          if (currentSetIndex > 0) {
+            currentSetIndex--;
+            renderExoplanetList();
+          }
+        }
+
+        function showNext() {
+          if (currentSetIndex < exoplanetSets.length - 1) {
+            currentSetIndex++;
+            renderExoplanetList();
+          }
+        }
+
+        function selectExoplanet(exoplanetName) {
+          var unityContainer = document.getElementById('unity-container');
+          unityContainer.style.display = 'flex';
+
+          if (unityInstance) {
+            unityInstance.SendMessage("UI_Controller", "SelectExoplanet", exoplanetName);
+          }
+        }
+
+
+        var container = document.querySelector("#unity-container");
+        var canvas = document.querySelector("#unity-canvas");
+        var loadingBar = document.querySelector("#unity-loading-bar");
+        var progressBarFull = document.querySelector("#unity-progress-bar-full");
+        var fullscreenButton = document.querySelector("#unity-fullscreen-button");
+
+        var buildUrl = "Build";
+        var loaderUrl = buildUrl + "/build_4.loader.js";
+        var config = {
+          dataUrl: buildUrl + "/build_4.data",
+          frameworkUrl: buildUrl + "/build_4.framework.js",
+          codeUrl: buildUrl + "/build_4.wasm",
+        };
+
+        function initializeUnity() {
+          if (!unityInstance) {
+            var script = document.createElement("script");
+            script.src = loaderUrl;
+            script.onload = () => {
+              createUnityInstance(canvas, config, (progress) => {
+                progressBarFull.style.width = 100 * progress + "%";
+              }).then((instance) => {
+                unityInstance = instance;
+                loadingBar.style.display = "none";
+                fullscreenButton.onclick = () => {
+                  unityInstance.SetFullscreen(1);
+                };
+              }).catch((message) => {
+                alert(message);
+              });
+            };
+            document.body.appendChild(script);
+          }
+        }
+
+        // Bluetooth connection to get gyro data
+        let bleDevice = null;
+        let notifyCharacteristic = null;
+
+        async function connectToBall() {
+          try {
+            const serviceUuid = "6e400001-b5a3-f393-e0a9-e50e24dcca9e"; 
+            const notifyCharacteristicUuid = "6e400002-b5a3-f393-e0a9-e50e24dcca9e"; 
+
+            console.log('Requesting Bluetooth Device...');
+            bleDevice = await navigator.bluetooth.requestDevice({
+              filters: [{ name: "SOAR_Exosky_input" }],
+              optionalServices: [serviceUuid]
+            });
+            
+            console.log('Connecting to GATT Server...');
+            const server = await bleDevice.gatt.connect();
+            
+            console.log('Getting Service...');
+            const service = await server.getPrimaryService(serviceUuid);
+            
+            console.log('Getting Notify Characteristic...');
+            notifyCharacteristic = await service.getCharacteristic(notifyCharacteristicUuid);
+
+            // Start listening to notifications
+            await notifyCharacteristic.startNotifications();
+            notifyCharacteristic.addEventListener('characteristicvaluechanged', handleGyroData);
+
+            document.getElementById('status').textContent = "Status: Connected";
+          } catch (error) {
+            console.error('Connection failed!', error);
+            document.getElementById('status').textContent = `Status: ${error}`;
+          }
+        }
+
+        // Handle gyro data received from the Bluetooth device
+        // Handle gyro data received from the Bluetooth device
+function handleGyroData(event) {
+  const value = new TextDecoder('utf-8').decode(event.target.value);
+  console.log('Notification received: ', value);
+
+  // Extracting gyro values, assuming data format is "GYRO:x,y,z"
+  const gyroData = value.split(":")[1]; // Get the "x,y,z" part
+  if (gyroData) {
+    const gyroArray = gyroData.split(","); // Split the values by comma
+
+    if (gyroArray.length === 3) {
+      let gyro1 = parseFloat(gyroArray[0].trim());
+      let gyro2 = parseFloat(gyroArray[1].trim());
+      let gyro3 = parseFloat(gyroArray[2].trim());
+
+      // Replace values below 1 with 0
+      gyro1 = (gyro1/10) < 1 ? 0 : (gyro1/10);
+      gyro2 = (gyro2/10) < 1 ? 0 : (gyro2/10);
+      gyro3 = (gyro3/10) < 1 ? 0 : (gyro3/10);
+
+      // Concatenate values into one string
+      let concatenatedGyroData = `${gyro1},${gyro2},${gyro3}`;
+
+      // Update HTML element with gyro data
+      document.getElementById('gyroData').textContent = `Gyro Data: ${concatenatedGyroData}`;
+
+      // Send the concatenated string to Unity
+      if (unityInstance) {
+        console.log('Sending gyro data to Unity:', concatenatedGyroData);
+        unityInstance.SendMessage("View", "ChangeView", concatenatedGyroData);
+      } else {
+        console.log('Unity instance not found.');
+      }
+    } else {
+      console.error('Error: Incorrect number of gyro values received.');
+    }
+  } else {
+    console.error('Error: No gyro data found in the received notification.');
+  }
+}
+
+
+        initializeUnity();
+      </script>
+    </div>
+  </body>
+</html>
