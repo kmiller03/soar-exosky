@@ -114,7 +114,7 @@ def return_new_stars(exo, stars):
                                distance=exo.get_dist() * u.parsec, frame='icrs')
     new_stars = []
 
-    for star in tqdm(stars, desc="Processing stars", unit="star"):
+    for star in stars:
         star_coord = SkyCoord(ra=star.get_ra() * u.degree, dec=star.get_dec() * u.degree, 
                               distance=star.get_dist().to(u.parsec), frame='icrs')
 
