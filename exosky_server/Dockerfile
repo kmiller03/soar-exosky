@@ -18,4 +18,6 @@ ENV FLASK_ENV=production
 ENV APP_PORT=5000
 
 # Run the application using Gunicorn and Flask-SocketIO
-CMD ["gunicorn", "--worker-class", "gevent", "-w", "1", "-b", "0.0.0.0:5000", "wsgi:app"]
+# CMD ["gunicorn", "--worker-class", "gevent", "-w", "1", "-b", "0.0.0.0:5000", "wsgi:app"]
+CMD ["gunicorn", "--worker-class", "gevent", "-w", "1", "-b", "0.0.0.0:5000", "--timeout", "500", "wsgi:app"]
+

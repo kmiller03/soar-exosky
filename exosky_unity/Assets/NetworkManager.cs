@@ -17,16 +17,11 @@ public class NetworkManager : MonoBehaviour
     string stars_url = "/stars_rel_to/";
     public string starID = "1234";
     public ui_controller uic;
-    public bool local = true;
-
     public OnStarsReceived onStarsReceived;
 
-    public void Start()
+    public void UseCloudServer(string msg)
     {
-        if (!local)
-        {
-            serverUrl = cloudUrl;
-        }
+        serverUrl = cloudUrl;
     }
 
     // Wrapper class for JSON deserialization

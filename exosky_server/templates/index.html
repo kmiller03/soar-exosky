@@ -12,12 +12,11 @@
     <div id="container">
       <div id="left-panel">
         <h2>Select an Exoplanet</h2>
-
-        <div id="search-bar">
+        <!--<div id="search-bar">
           <input type="text" id="search-input" placeholder="Search Exoplanet..." />
           <button id="search-button" onclick="searchExoplanet()">Search</button>
           <p id="search-result" style="color: red;"></p> 
-        </div>
+        </div>-->
 
         <ul id="exoplanet-list"></ul>
 
@@ -26,7 +25,10 @@
           <button onclick="showNext()">Next</button>
         </div>
 
-
+        <!-- Add checkbox for use Mouse-->
+         <br>
+        USE MOUSE <input type="checkbox" id="useMouse" name="useMouse" value="useMouse">
+        <br>
         <button onclick="connectToBall()" style="margin-top: 10px;">Connect to Bluetooth</button> <!-- Button for connecting Bluetooth -->
         <p id="status">Status: Disconnected</p>
         <p id="gyroData">Gyro Data: N/A</p> <!-- Display gyro data -->
@@ -53,6 +55,21 @@
         var gyroData = null;
 
 
+        //mouse checkbox
+        var useMouse = document.getElementById("useMouse");
+        useMouse.addEventListener("change", function() {
+          if (useMouse.checked) {
+            if (unityInstance) {
+              unityInstance.SendMessage("View", "UseMouse", "");
+            }
+          } else {
+            if (unityInstance) {
+              unityInstance.SendMessage("View", "DisableMouseControl", "");
+            }
+          }
+        });
+
+
         //var exoplanetSets = [
         //  ['Exo 1', 'Exo 2', 'Exo 3', 'Exo 4', 'Exo 5', 'Exo 6', 'Exo 7', 'Exo 8', 'Exo 9', 'Exo 10'],
         //  ['Exo 11', 'Exo 12', 'Exo 13', 'Exo 14', 'Exo 15', 'Exo 16', 'Exo 17', 'Exo 18', 'Exo 19', 'Exo 20']
@@ -64,7 +81,7 @@
         //use localhost if server is in localhost, otherwise use the server's IP address
         var serverUrl = "http://localhost:5000";
         if (window.location.hostname !== "localhost") {
-          serverUrl = "https://" + window.location.hostname + ":5000";
+          serverUrl = "https://" + window.location.hostname;
         }
 
         //fetch exoplanet data from the server at localhost:5000/expolanets
@@ -124,6 +141,10 @@
           unityContainer.style.display = 'flex';
 
           if (unityInstance) {
+            //if server is in localhost, use localhost, otherwise use the server's IP address
+            if (window.location.hostname !== "localhost") {
+              unityInstance.SendMessage("NetworkManager", "UseCloudServer", serverUrl);
+            }
             unityInstance.SendMessage("UI_Controller", "SelectExoplanet", exoplanetName);
           }
         }
@@ -136,11 +157,11 @@
         var fullscreenButton = document.querySelector("#unity-fullscreen-button");
 
         var buildUrl = "Build";
-        var loaderUrl = buildUrl + "/build_4.loader.js";
+        var loaderUrl = buildUrl + "/build_6.loader.js";
         var config = {
-          dataUrl: buildUrl + "/build_4.data",
-          frameworkUrl: buildUrl + "/build_4.framework.js",
-          codeUrl: buildUrl + "/build_4.wasm",
+          dataUrl: buildUrl + "/build_6.data",
+          frameworkUrl: buildUrl + "/build_6.framework.js",
+          codeUrl: buildUrl + "/build_6.wasm",
         };
 
         function initializeUnity() {

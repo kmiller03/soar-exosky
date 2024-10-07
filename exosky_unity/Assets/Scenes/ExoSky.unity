@@ -1031,7 +1031,7 @@ MonoBehaviour:
   player: {fileID: 330585543}
   lastPlayerPosition: {x: 0, y: 0, z: 0}
   stars: []
-  randomizeStars: 1
+  randomizeStars: 0
   starsInitialized: 0
   starBaseObj: {fileID: 1132153948}
   scaleFactor: 10000
@@ -1122,6 +1122,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1624790188}
   - component: {fileID: 1624790189}
+  - component: {fileID: 1624790190}
   m_Layer: 0
   m_Name: View
   m_TagString: Untagged
@@ -1137,7 +1138,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1624790187}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.054433055, y: 0.70500857, z: -0.29227746, w: 0.6438741}
+  m_LocalRotation: {x: 0.17454796, y: 0.0057456386, z: -0.1354348, w: 0.975273}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1145,7 +1146,7 @@ Transform:
   - {fileID: 330585546}
   - {fileID: 1006384062}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 20, y: 90, z: -28.83}
+  m_LocalEulerAnglesHint: {x: 20, y: -2.2, z: -16.2}
 --- !u!114 &1624790189
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1159,6 +1160,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   viewContext: {fileID: 1624790187}
+--- !u!114 &1624790190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1624790187}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cf6752e10c343f458e9d2b1cc3dd768, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  viewContext: {fileID: 1624790187}
+  useMouse: 0
 --- !u!1 &1967167456
 GameObject:
   m_ObjectHideFlags: 0

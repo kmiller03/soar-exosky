@@ -65,24 +65,25 @@ def star_setup():
 
 
 def exo_setup():
-    # Exoplanet Archive API request to retrieve all exoplanets
-    base_url = 'https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query='
-    query = 'select+pl_name,ra,dec,sy_dist+from+ps'
-    full_url = base_url + query + '&format=csv'
+    try:
+        # Load the exoplanet data
+        df_exo = pd.read_csv('all_planets_data.csv')
+    except FileNotFoundError:
+        # Exoplanet Archive API request to retrieve all exoplanets
+        base_url = 'https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query='
+        query = 'select+pl_name,ra,dec,sy_dist+from+ps'
+        full_url = base_url + query + '&format=csv'
 
-    response = requests.get(full_url)
+        response = requests.get(full_url)
 
-    # Check if the request was successful
-    if response.status_code == 200:
-        data = response.text
-        df_exo = pd.read_csv(io.StringIO(data))
-        df_exo.to_csv('all_planets_data.csv', index=False)
-        print("Data successfully saved to all_planets_data.csv")
-    else:
-        print("Error:", response.status_code)
-
-    # Load the exoplanet data
-    df_exo = pd.read_csv('all_planets_data.csv')
+        # Check if the request was successful
+        if response.status_code == 200:
+            data = response.text
+            df_exo = pd.read_csv(io.StringIO(data))
+            df_exo.to_csv('all_planets_data.csv', index=False)
+            print("Data successfully saved to all_planets_data.csv")
+        else:
+            print("Error:", response.status_code)
 
     exos = []
 

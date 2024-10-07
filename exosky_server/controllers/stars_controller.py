@@ -26,6 +26,7 @@ def get_exoplanets():
 
 @bp.route("/stars_rel_to/<string:planet_id>")
 def get_stars_rel_to(planet_id):
+    print(f'Request received for exoplanet {planet_id}')
     try:
         # exos = gsd.exo_setup()
         first_exo = gsd.return_exo_by_id(planet_id)
