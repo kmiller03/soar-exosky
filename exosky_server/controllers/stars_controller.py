@@ -32,7 +32,7 @@ def get_stars_rel_to(planet_id):
         first_exo = gsd.return_exo_by_id(planet_id)
         if first_exo is None:
             return jsonify({'error': 'Exoplanet not found'}), 404
-        stars_rel_to = gsd.return_new_stars(first_exo, gsd.star_setup())
+        stars_rel_to, max_rgb = gsd.return_new_stars(first_exo, gsd.star_setup())
         # stars_rel_to = gsd.get_stars(exo, stars)
         '''
         return to the client:
@@ -51,7 +51,9 @@ def get_stars_rel_to(planet_id):
         '''
         res = {
             'expoplanet_id': planet_id,
-            'stars': [star.to_json() for star in stars_rel_to]
+            'stars': [star.to_json() for star in stars_rel_to],
+            'max_rgb': [float(max_rgb[0]), float(max_rgb[1]), float(max_rgb[2])]
+
         }
         print("Returning stars")
         # convert response to json and send to client

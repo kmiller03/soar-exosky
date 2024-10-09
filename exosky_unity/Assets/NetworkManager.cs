@@ -8,7 +8,7 @@ using UnityEditor;
 #endif
 
 [System.Serializable]
-public class OnStarsReceived : UnityEvent<List<Star>> { }
+public class OnStarsReceived : UnityEvent<List<Star>, float[]> { }
 
 public class NetworkManager : MonoBehaviour
 {
@@ -28,6 +28,7 @@ public class NetworkManager : MonoBehaviour
     [System.Serializable]
     private class StarsWrapper
     {
+        public float[] max_rgb = {255,255,255};
         public List<StarJson> stars;
     }
 
@@ -38,6 +39,9 @@ public class NetworkManager : MonoBehaviour
         public float dec;
         public float ra;
         public float dist;
+        public float rmag;
+        public float gmag;
+        public float bmag;
     }
 
     public void RequestStars(string starID)
@@ -73,13 +77,16 @@ public class NetworkManager : MonoBehaviour
                 {
                     declination = starJson.dec,
                     ascension = starJson.ra,
-                    distance = starJson.dist
+                    distance = starJson.dist,
+                    r_mag = starJson.rmag,
+                    g_mag = starJson.gmag,
+                    b_mag = starJson.bmag
                 };
                 stars.Add(star);
             }
 
             // Invoke the UnityEvent with the parsed stars
-            onStarsReceived?.Invoke(stars);
+            onStarsReceived?.Invoke(stars, wrapper.max_rgb);
             uic.ExpoplanetLoded(starId);
         }
     }
