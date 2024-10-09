@@ -22,12 +22,7 @@ To run the server, run the following and access the server at `http://localhost:
 python app.py
 ```
 
-After the first setup to run the server just do:
-```
-./venv/Scrips/activate
-python app.py
-```
-
+Make sure the virtual environment is always activated before attempting to run the server.
 
 ### Exosky Unity
 
