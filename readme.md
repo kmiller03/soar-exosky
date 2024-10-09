@@ -6,3 +6,35 @@ Innovative input device provides a reference for the chosen exoplanet and levera
 ![image](https://github.com/user-attachments/assets/83cdaf0f-0a3b-4875-99f6-9ad4ef70bbf8)
 ![image](https://github.com/user-attachments/assets/4ce7ef1e-ce16-41e2-9ce8-2a12fbdc2bbb)
 
+## DEVELOPMENT
+
+Clone the repository.
+
+### Exosky Server
+`cd` into the `exosky_server` directory and run the following commands:
+```
+python -m venv venv
+./venv/Scrips/activate
+python -m pip install -r requirements.txt
+```
+To run the server, run the following and access the server at `http://localhost:5000`:
+```
+python app.py
+```
+
+After the first setup to run the server just do:
+```
+./venv/Scrips/activate
+python app.py
+```
+
+
+### Exosky Unity
+
+Install **[Unity Hub](https://unity.com/unity-hub)**, complete all the setup and once finished attempt to install **[Unity 2022.3.41f1](https://unity.com/releases/editor/whats-new/2022.3.41)**. You will be asked for which modules to install, select the following:
+- [x] Microsoft Visual Studio Community 2022
+- [x] WebGL Build Support
+
+Make sure to install **[blender](https://download.blender.org/release/Blender3.4/blender-3.4.0-windows-x64.msi)**
+
+In the `Projects` tab of the Unity Hub, click on: *Add > Add project from disk*. Browse and select the `exosky_unity` folder and click *Add Project*. Once the project is added, click on the project to open it in Unity. The first time loading will be the longest, the subsequent loads will be faster.
