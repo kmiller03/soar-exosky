@@ -4,9 +4,11 @@ import matplotlib.pyplot as plt
 # Load CSV data
 file_path = 'gaia_star_data.csv'  # Replace with the actual path to your CSV file
 data = pd.read_csv(file_path)
+data['bp_rp_calc'] = data['phot_bp_mean_mag'] - data['phot_rp_mean_mag']
+
 
 # Calculate temperature using the bp_rp index
-data['temperature'] = 5600 * (1 / (0.92 * (data['bp_rp'] + 1)))
+data['temperature'] = 5600 * (1 / (0.92 * (data['bp_rp_calc'] + 1)))
 
 # Classify stars based on temperature into spectral types and assign colors
 def classify_star(temperature):
@@ -29,7 +31,7 @@ def classify_star(temperature):
 data[['spectral_type', 'color']] = data['temperature'].apply(lambda temp: pd.Series(classify_star(temp)))
 
 # Create a new dataframe for plotting
-plot_df = data[['bp_rp', 'temperature', 'spectral_type']]
+plot_df = data[['bp_rp_calc', 'temperature', 'spectral_type']]
 
 # Define row index for x-axis
 x = range(len(plot_df))
@@ -46,7 +48,7 @@ axes[0].grid()
 axes[0].legend()
 
 # Graph 2: bp_rp vs. Row Index
-axes[1].plot(x, plot_df['bp_rp'], label='bp_rp', color='blue')
+axes[1].plot(x, plot_df['bp_rp_calc'], label='bp_rp', color='blue')
 axes[1].set_xlabel('Row Index')
 axes[1].set_ylabel('bp_rp')
 axes[1].set_title('Star bp_rp vs. Row Index')
