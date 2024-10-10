@@ -17,10 +17,11 @@ python -m venv venv
 ./venv/Scrips/activate
 python -m pip install -r requirements.txt
 ```
-To run the server, run the following and access the server at `http://localhost:5000`:
+To run the server, run the following:
 ```
 python app.py
 ```
+Access the server at `http://localhost:5000`
 
 Make sure the virtual environment is always activated before attempting to run the server.
 
@@ -32,4 +33,11 @@ Install **[Unity Hub](https://unity.com/unity-hub)**, complete all the setup and
 
 Make sure to install **[blender](https://download.blender.org/release/Blender3.4/blender-3.4.0-windows-x64.msi)**
 
-In the `Projects` tab of the Unity Hub, click on: *Add > Add project from disk*. Browse and select the `exosky_unity` folder and click *Add Project*. Once the project is added, click on the project to open it in Unity. The first time loading will be the longest, the subsequent loads will be faster.
+In the `Projects` tab of the Unity Hub, click on: `Add > Add project from disk`. Browse and select the `exosky_unity` folder and click *Add Project*. Once the project is added, click on the project to open it in Unity. The first time loading will be the longest, the subsequent loads will be faster.
+
+### Displaying Stars
+By default when playing the Unity Scene, the stars will not be displayed. To display the stars either:
+1. **Randomly generate them**: Before playing the scene, select the StarGenerator object in the hierarchy and check the *Randomize Stars* checkbox in the inspector.
+2. **Load them from the server**: Make sure the server is running. Play the scene, select the NetworkManager object in the hierarchy, in the inspector enter the name of the exoplanet (e.g: "Proxima Cen b") and click the *Get Stars From Server* button.
+
+Good luck, *MTFBWY*

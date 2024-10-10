@@ -30,7 +30,7 @@ def star_setup():
         WHERE (MOD(source_id, 10000) = 0) AND parallax > 0 AND bp_rp < 0
         """
 
-        # Query to retrieve remaining 13000 stars with any bp_rp value
+        # Query to retrieve remaining 8000 stars with any bp_rp value
         query_remaining_stars = """
         SELECT TOP 8000
             source_id,
