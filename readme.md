@@ -1,5 +1,8 @@
 # SOAR EXOSKY ✨
 
+## NASA SPACE APPS SUBMISSION
+Final submission and team available on the **[NASA Space Apps website]([https://download.blender.org/release/Blender3.4/blender-3.4.0-windows-x64.msi](https://www.spaceappschallenge.org/nasa-space-apps-2024/find-a-team/usf-soar/?tab=project))**
+
 ## INPUT DEVICE
 Innovative input device provides a reference for the chosen exoplanet and leverages an IMU, a ESP32, and bluetooth technology to control the view of the night sky.
 
